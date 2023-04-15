@@ -12,6 +12,7 @@ public class GolfBall {
     public double vy = 0.0;
 
     public int numCollideFrames = 0;
+    public Planet whichPlanetWeAreOn = null;
     public static final int COLLIDE_THRESHOLD = 30;
     public boolean hitGoal = false;
 
@@ -25,6 +26,7 @@ public class GolfBall {
     	vy = 0.0;
         numCollideFrames = 0;
     	hitGoal = false;
+        whichPlanetWeAreOn = null;
     }
 
     public void update(Planet[] planets) {
@@ -63,7 +65,8 @@ public class GolfBall {
             var distSq = (dx * dx) + (dy * dy);
             var rSum = RADIUS + planet.radius();
             var rSumSq = rSum * rSum;
-            if (distSq <= rSumSq) {
+            if (distSq - 0.1 <= rSumSq) {
+                whichPlanetWeAreOn = planet;
                 var dist = Math.sqrt(distSq);
                 dx /= dist;
                 dy /= dist;

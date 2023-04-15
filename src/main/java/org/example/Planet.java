@@ -4,10 +4,26 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
 
-public record Planet(double x, double y, double radius, boolean isGoal) {
+public class Planet {
+    private double angle;
+    private final double speed;
+    private final double distance;
+    private final double radius;
+    private final boolean isGoal;
+
+    public Planet(double angle, double speed, double distance, double radius, boolean isGoal) {
+        this.angle = angle;
+        this.speed = speed;
+        this.distance = distance;
+        this.radius = radius;
+        this.isGoal = isGoal;
+    }
+
     private static final Image planetImage = RenderUtils.getImage("planet.png");
 
     public void render(Graphics g) {
+        var x = this.x();
+        var y = this.y();
     	if(isGoal) {
     		g.setColor(Color.YELLOW);
             RenderUtils.renderCircle(g, x, y, radius);
@@ -17,7 +33,27 @@ public record Planet(double x, double y, double radius, boolean isGoal) {
     	}
     }
 
+    public void update() {
+        this.angle += this.speed;
+    }
+
     public double volume() {
         return radius * radius * radius * Math.PI * (4.0 / 3.0);
+    }
+
+    public double x() {
+        return Math.cos(this.angle) * this.distance;
+    }
+
+    public double y() {
+        return Math.sin(this.angle) * this.distance;
+    }
+
+    public double radius() {
+        return this.radius;
+    }
+
+    public boolean isGoal() {
+        return this.isGoal;
     }
 }

@@ -40,9 +40,9 @@ public final class Canvas extends JPanel implements ActionListener, MouseListene
         var i = 0;
 //        System.out.println("Level " + (levelsCompleted+1));
         hits = 0;
-        planets = LevelBuilder.createLevel(8);
-        ball.x = planets[0].x();
-        ball.y = planets[0].y() - planets[0].radius();
+        planets = LevelBuilder.createLevel(4);
+        ball.x = planets[planets.length - 1].x();
+        ball.y = planets[planets.length - 1].y() - planets[planets.length - 1].radius();
         
     }
 
@@ -53,19 +53,30 @@ public final class Canvas extends JPanel implements ActionListener, MouseListene
     		generateLevel();
     		return;
     	}
-    	else if (ball.numCollideFrames >= GolfBall.COLLIDE_THRESHOLD) {
-            var point = getMousePosition();
-            
-            if (point != null) {
-                if (!mouseDown && lastMouseDown) {
-                    ball.vx = (point.x - (getWidth() / 2)) * 0.1;
-                    ball.vy = (point.y - (getHeight() / 2)) * 0.1;
-                    ball.numCollideFrames = 0;
-                    hits++;
+    	else {
+            for (var planet : planets) {
+                var oldX = planet.x();
+                var oldY = planet.y();
+                planet.update();
+                if (planet == ball.whichPlanetWeAreOn) {
+                    ball.x += planet.x() - oldX;
+                    ball.y += planet.y() - oldY;
                 }
             }
-        } else {
-            ball.update(planets);
+            if (ball.numCollideFrames >= GolfBall.COLLIDE_THRESHOLD) {
+                var point = getMousePosition();
+
+                if (point != null) {
+                    if (!mouseDown && lastMouseDown) {
+                        ball.vx = (point.x - (getWidth() / 2)) * 0.1;
+                        ball.vy = (point.y - (getHeight() / 2)) * 0.1;
+                        ball.numCollideFrames = 0;
+                        hits++;
+                    }
+                }
+            } else {
+                ball.update(planets);
+            }
         }
         lastMouseDown = mouseDown;
     }
