@@ -12,6 +12,6 @@ public class GolfBall {
 
     public void render(Graphics g) {
         g.setColor(Color.WHITE);
-        g.fillOval((int) Math.round(x - RADIUS), (int) Math.round(y - RADIUS), (int) Math.round(2.0 * RADIUS), (int) Math.round(2.0 * RADIUS));
+        RenderUtils.renderCircle(g, x, y, RADIUS);
     }
 }
