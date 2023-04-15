@@ -16,10 +16,11 @@ public class GolfBall {
     public boolean hitGoal = false;
     
     public void resetBall() {
-    	x = -50;
-    	y = -50;
-    	vx=0;
-    	vy=0;
+    	x = -50.0;
+    	y = -50.0;
+    	vx = 0.0;
+    	vy = 0.0;
+        numCollideFrames = 0;
     	hitGoal = false;
     }
 

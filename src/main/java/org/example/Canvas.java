@@ -19,10 +19,6 @@ public final class Canvas extends JPanel implements ActionListener, MouseListene
     public Planet[] planets = new Planet[0];
     public boolean mouseDown = false;
     public boolean lastMouseDown = false;
-    public int mouseClickX = 0;
-    public int mouseClickY = 0;
-
-    public static Planet goal = null;
     public Canvas() {
         super();
         setSize(new Dimension(WIDTH, HEIGHT));
@@ -46,6 +42,8 @@ public final class Canvas extends JPanel implements ActionListener, MouseListene
             }
         }
         planets = newPlanets;
+        ball.x = planets[0].x();
+        ball.y = planets[0].y() - planets[0].radius();
         
     }
 
@@ -58,12 +56,9 @@ public final class Canvas extends JPanel implements ActionListener, MouseListene
     	else if (ball.numCollideFrames >= GolfBall.COLLIDE_THRESHOLD) {
             var point = getMousePosition();
             if (point != null) {
-                if (mouseDown && !lastMouseDown) {
-                    mouseClickX = point.x;
-                    mouseClickY = point.y;
-                } else if (!mouseDown && lastMouseDown) {
-                    ball.vx = (double) (point.x - mouseClickX) * 0.1;
-                    ball.vy = (double) (point.y - mouseClickY) * 0.1;
+                if (!mouseDown && lastMouseDown) {
+                    ball.vx = (point.x - (getWidth() / 2)) * 0.1;
+                    ball.vy = (point.y - (getHeight() / 2)) * 0.1;
                     ball.numCollideFrames = 0;
                 }
             }
@@ -79,9 +74,9 @@ public final class Canvas extends JPanel implements ActionListener, MouseListene
         var point = getMousePosition();
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, getWidth(), getHeight());
-        if (mouseDown && point != null) {
+        if (mouseDown && ball.numCollideFrames >= GolfBall.COLLIDE_THRESHOLD && point != null) {
             g.setColor(Color.WHITE);
-            g.drawLine(mouseClickX, mouseClickY, point.x, point.y);
+            g.drawLine(getWidth() / 2, getHeight() / 2, point.x, point.y);
         }
         g.translate((getWidth() / 2) - (int) Math.round(ball.x), (getHeight() / 2) - (int) Math.round(ball.y));
         for (var planet : planets) {
