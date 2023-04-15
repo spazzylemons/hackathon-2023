@@ -13,6 +13,15 @@ public class GolfBall {
 
     public int numCollideFrames = 0;
     public static final int COLLIDE_THRESHOLD = 30;
+    public boolean hitGoal = false;
+    
+    public void resetBall() {
+    	x = -50;
+    	y = -50;
+    	vx=0;
+    	vy=0;
+    	hitGoal = false;
+    }
 
     public void update(Planet[] planets) {
         // gravity calculations
@@ -50,11 +59,17 @@ public class GolfBall {
                 var len = Math.sqrt((vx * vx) + (vy * vy));
                 var vxn = vx / len;
                 var vyn = vy / len;
-                vx = (-vxn - dx) * 0.45 * len;
-                vy = (-vyn - dy) * 0.45 * len;
+                if(planet.isGoal()) {
+                	hitGoal = true;
+                	return;
+                }
+                vx = (-vxn - dx) * 0.35 * len;
+                vy = (-vyn - dy) * 0.35 * len;
                 ++this.numCollideFrames;
+                
                 return;
             }
+            
         }
         this.numCollideFrames = 0;
     }

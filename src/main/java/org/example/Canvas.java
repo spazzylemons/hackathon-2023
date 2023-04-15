@@ -22,6 +22,7 @@ public final class Canvas extends JPanel implements ActionListener, MouseListene
     public int mouseClickX = 0;
     public int mouseClickY = 0;
 
+    public static Planet goal = null;
     public Canvas() {
         super();
         setSize(new Dimension(WIDTH, HEIGHT));
@@ -33,6 +34,7 @@ public final class Canvas extends JPanel implements ActionListener, MouseListene
     }
 
     private void generateLevel() {
+    	ball.resetBall();
         var newPlanets = new Planet[8];
         var i = 0;
         for (var x = 0; x < 4; x++) {
@@ -40,14 +42,20 @@ public final class Canvas extends JPanel implements ActionListener, MouseListene
                 var xPos = (x * 200.0) + (Math.random() * 100.0) + 50.0;
                 var yPos = (y * 200.0) + (Math.random() * 100.0) + 50.0;
                 var radius = 20.0 * Math.random() + 20.0;
-                newPlanets[i++] = new Planet(xPos, yPos, radius);
+                newPlanets[i++] = new Planet(xPos, yPos, radius, x==3&&y==1);
             }
         }
         planets = newPlanets;
+        
     }
 
     private void updateCanvas() {
-        if (ball.numCollideFrames >= GolfBall.COLLIDE_THRESHOLD) {
+    	if(ball.hitGoal) {
+    		System.out.println("You Did It!");
+    		generateLevel();
+    		return;
+    	}
+    	else if (ball.numCollideFrames >= GolfBall.COLLIDE_THRESHOLD) {
             var point = getMousePosition();
             if (point != null) {
                 if (mouseDown && !lastMouseDown) {
