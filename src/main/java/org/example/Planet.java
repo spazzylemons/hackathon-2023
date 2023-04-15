@@ -21,6 +21,14 @@ public class Planet {
 
     private static final Image planetImage = RenderUtils.getImage("planet.png");
 
+    private static final Image[] PLANET_IMAGES = new Image[24];
+
+    static {
+        for (var i = 0; i < 24; i++) {
+            PLANET_IMAGES[i] = RenderUtils.getImage("planet/" + String.format("%04d", i + 1) + ".png");
+        }
+    }
+
     public void render(Graphics g) {
         var x = this.x();
         var y = this.y();
@@ -29,12 +37,12 @@ public class Planet {
             RenderUtils.renderCircle(g, x, y, radius);
     	}
     	else {
-            g.drawImage(planetImage, (int) Math.round(x - radius), (int) Math.round(y - radius), (int) Math.round(2.0 * radius), (int) Math.round(2.0 * radius), null);
+            g.drawImage(PLANET_IMAGES[((int) Math.round(this.angle / (2.0 * Math.PI) * 24.0) + 6) % 24], (int) Math.round(x - radius), (int) Math.round(y - radius), (int) Math.round(2.0 * radius), (int) Math.round(2.0 * radius), null);
     	}
     }
 
     public void update() {
-        this.angle += this.speed;
+        this.angle = (this.angle + this.speed) % (2.0 * Math.PI);
     }
 
     public double volume() {
