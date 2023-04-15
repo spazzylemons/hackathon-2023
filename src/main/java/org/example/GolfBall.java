@@ -6,12 +6,16 @@ import java.awt.Graphics;
 public class GolfBall {
     public static final double RADIUS = 5.0;
     public static final double GRAVITY = 0.04;
-    public double x = 10.0;
-    public double y = 10.0;
+    public double x = -50.0;
+    public double y = -50.0;
     public double vx = 0.0;
     public double vy = 0.0;
 
+    public int numCollideFrames = 0;
+    public static final int COLLIDE_THRESHOLD = 30;
+
     public void update(Planet[] planets) {
+        // gravity calculations
         var gravityX = 0.0;
         var gravityY = 0.0;
         for (var planet : planets) {
@@ -22,15 +26,34 @@ public class GolfBall {
             dx /= r;
             dy /= r;
             var force = Math.max((GRAVITY * planet.volume()) / rr, GRAVITY);
-            if (force < 10.0f) {
-                gravityX += dx * force;
-                gravityY += dy * force;
-            }
+            gravityX += dx * force;
+            gravityY += dy * force;
         }
         vx += gravityX;
         vy += gravityY;
         x += vx;
         y += vy;
+        // collision calculations
+        for (var planet : planets) {
+            var dx = planet.x() - x;
+            var dy = planet.y() - y;
+            var distSq = (dx * dx) + (dy * dy);
+            var rSum = RADIUS + planet.radius();
+            var rSumSq = rSum * rSum;
+            if (distSq <= rSumSq) {
+                var dist = Math.sqrt(distSq);
+                dx /= dist;
+                dy /= dist;
+                var diff = rSum - dist;
+                x -= dx * diff;
+                y -= dy * diff;
+                vx *= 0.125;
+                vy *= 0.125;
+                ++this.numCollideFrames;
+                return;
+            }
+        }
+        this.numCollideFrames = 0;
     }
 
     public void render(Graphics g) {
