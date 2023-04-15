@@ -10,6 +10,9 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import javax.swing.JPanel;
 import javax.swing.Timer;
+import java.awt.FontMetrics;
+import java.awt.Font;
+
 
 public final class Canvas extends JPanel implements ActionListener, MouseListener {
     public static final int WIDTH = 960;
@@ -19,6 +22,9 @@ public final class Canvas extends JPanel implements ActionListener, MouseListene
     public Planet[] planets = new Planet[0];
     public boolean mouseDown = false;
     public boolean lastMouseDown = false;
+    public int hits = 0;
+    public int levelsCompleted = 0;
+    public Font text = new Font(Font.SANS_SERIF, Font.PLAIN, 12);
     public Canvas() {
         super();
         setSize(new Dimension(WIDTH, HEIGHT));
@@ -33,6 +39,8 @@ public final class Canvas extends JPanel implements ActionListener, MouseListene
     	ball.resetBall();
         var newPlanets = new Planet[8];
         var i = 0;
+//        System.out.println("Level " + (levelsCompleted+1));
+        hits = 0;
         for (var x = 0; x < 4; x++) {
             for (var y = 0; y < 2; y++) {
                 var xPos = (x * 200.0) + (Math.random() * 100.0) + 50.0;
@@ -49,17 +57,20 @@ public final class Canvas extends JPanel implements ActionListener, MouseListene
 
     private void updateCanvas() {
     	if(ball.hitGoal) {
-    		System.out.println("You Did It!");
+//    		System.out.println("You Did It!");
+    		levelsCompleted++;
     		generateLevel();
     		return;
     	}
     	else if (ball.numCollideFrames >= GolfBall.COLLIDE_THRESHOLD) {
             var point = getMousePosition();
+            
             if (point != null) {
                 if (!mouseDown && lastMouseDown) {
                     ball.vx = (point.x - (getWidth() / 2)) * 0.1;
                     ball.vy = (point.y - (getHeight() / 2)) * 0.1;
                     ball.numCollideFrames = 0;
+                    hits++;
                 }
             }
         } else {
@@ -70,15 +81,21 @@ public final class Canvas extends JPanel implements ActionListener, MouseListene
 
     @Override
     protected void paintComponent(Graphics g) {
+    	g.setFont(text);
         super.paintComponent(g);
         var point = getMousePosition();
+//        g.drawRect(0, 0, 12, 13);
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, getWidth(), getHeight());
+        g.setColor(Color.RED);
+        g.drawString("Level " + (levelsCompleted+1), 10, 12);
         if (mouseDown && ball.numCollideFrames >= GolfBall.COLLIDE_THRESHOLD && point != null) {
             g.setColor(Color.WHITE);
             g.drawLine(getWidth() / 2, getHeight() / 2, point.x, point.y);
         }
+        g.drawString("Hits "+(hits), 10, 25);
         g.translate((getWidth() / 2) - (int) Math.round(ball.x), (getHeight() / 2) - (int) Math.round(ball.y));
+        
         for (var planet : planets) {
             planet.render(g);
         }
