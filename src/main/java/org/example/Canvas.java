@@ -37,19 +37,10 @@ public final class Canvas extends JPanel implements ActionListener, MouseListene
 
     private void generateLevel() {
     	ball.resetBall();
-        var newPlanets = new Planet[8];
         var i = 0;
 //        System.out.println("Level " + (levelsCompleted+1));
         hits = 0;
-        for (var x = 0; x < 4; x++) {
-            for (var y = 0; y < 2; y++) {
-                var xPos = (x * 200.0) + (Math.random() * 100.0) + 50.0;
-                var yPos = (y * 200.0) + (Math.random() * 100.0) + 50.0;
-                var radius = 20.0 * Math.random() + 20.0;
-                newPlanets[i++] = new Planet(xPos, yPos, radius, x==3&&y==1);
-            }
-        }
-        planets = newPlanets;
+        planets = LevelBuilder.createLevel(8);
         ball.x = planets[0].x();
         ball.y = planets[0].y() - planets[0].radius();
         
