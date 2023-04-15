@@ -12,7 +12,7 @@ public final class Canvas extends JPanel implements ActionListener {
     public static final int WIDTH = 960;
     public static final int HEIGHT = 540;
 
-    private int x = 0;
+    public final GolfBall ball = new GolfBall();
 
     public Canvas() {
         super();
@@ -23,14 +23,16 @@ public final class Canvas extends JPanel implements ActionListener {
     }
 
     private void updateCanvas() {
-        x = (x + 1) % 100;
+        ball.update();
     }
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
+        g.setColor(Color.BLACK);
+        g.fillRect(0, 0, getWidth(), getHeight());
         g.setColor(Color.RED);
-        g.fillRect(x, x, 100, 200);
+        ball.render(g);
     }
 
     @Override
