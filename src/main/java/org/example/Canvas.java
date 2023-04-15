@@ -39,7 +39,7 @@ public final class Canvas extends JPanel implements ActionListener {
     }
 
     private void updateCanvas() {
-        ball.update();
+        ball.update(planets);
     }
 
     @Override
@@ -47,6 +47,7 @@ public final class Canvas extends JPanel implements ActionListener {
         super.paintComponent(g);
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, getWidth(), getHeight());
+        g.translate((getWidth() / 2) - (int) Math.round(ball.x), (getHeight() / 2) - (int) Math.round(ball.y));
         for (var planet : planets) {
             planet.render(g);
         }
