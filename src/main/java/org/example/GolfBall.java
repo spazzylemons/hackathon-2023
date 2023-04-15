@@ -5,7 +5,7 @@ import java.awt.Graphics;
 
 public class GolfBall {
     public static final double RADIUS = 5.0;
-    public static final double GRAVITY = 0.04;
+    public static final double GRAVITY = 0.019;
     public double x = -50.0;
     public double y = -50.0;
     public double vx = 0.0;
@@ -47,8 +47,11 @@ public class GolfBall {
                 var diff = rSum - dist;
                 x -= dx * diff;
                 y -= dy * diff;
-                vx *= 0.125;
-                vy *= 0.125;
+                var len = Math.sqrt((vx * vx) + (vy * vy));
+                var vxn = vx / len;
+                var vyn = vy / len;
+                vx = (-vxn - dx) * 0.45 * len;
+                vy = (-vyn - dy) * 0.45 * len;
                 ++this.numCollideFrames;
                 return;
             }
