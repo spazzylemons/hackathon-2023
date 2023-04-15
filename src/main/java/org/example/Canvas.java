@@ -25,6 +25,7 @@ public final class Canvas extends JPanel implements ActionListener, MouseListene
     public int levelsCompleted = 0;
     public Font text = new Font(Font.SANS_SERIF, Font.PLAIN, 12);
     private static final Image IMAGE = RenderUtils.getImage("bg.png");
+    private int numHitsTotal = 0;
     public Canvas() {
         super();
         setSize(new Dimension(WIDTH, HEIGHT));
@@ -40,7 +41,7 @@ public final class Canvas extends JPanel implements ActionListener, MouseListene
         var i = 0;
 //        System.out.println("Level " + (levelsCompleted+1));
         hits = 0;
-        planets = LevelBuilder.createLevel(4);
+        planets = LevelBuilder.createLevel((levelsCompleted / 2) + 4);
         ball.x = planets[planets.length - 1].x();
         ball.y = planets[planets.length - 1].y() - planets[planets.length - 1].radius();
         
@@ -68,10 +69,11 @@ public final class Canvas extends JPanel implements ActionListener, MouseListene
 
                 if (point != null) {
                     if (!mouseDown && lastMouseDown) {
-                        ball.vx = (point.x - (getWidth() / 2)) * 0.1;
-                        ball.vy = (point.y - (getHeight() / 2)) * 0.1;
+                        ball.vx = (point.x - (getWidth() / 2)) * 0.04;
+                        ball.vy = (point.y - (getHeight() / 2)) * 0.04;
                         ball.numCollideFrames = 0;
                         hits++;
+                        numHitsTotal++;
                     }
                 }
             } else {
@@ -104,13 +106,13 @@ public final class Canvas extends JPanel implements ActionListener, MouseListene
         renderParallax(g, 0.25, 10, 50);
         renderParallax(g, 0.175, 70, 70);
         renderParallax(g, 0.125, 80, 200);
-        g.setColor(Color.RED);
+        g.setColor(Color.WHITE);
         g.drawString("Level " + (levelsCompleted+1), 10, 12);
         if (mouseDown && ball.numCollideFrames >= GolfBall.COLLIDE_THRESHOLD && point != null) {
-            g.setColor(Color.WHITE);
             g.drawLine(getWidth() / 2, getHeight() / 2, point.x, point.y);
         }
         g.drawString("Hits "+(hits), 10, 25);
+        g.drawString("Total Hits "+(numHitsTotal), 10, 38);
         g.translate((getWidth() / 2) - (int) Math.round(ball.x), (getHeight() / 2) - (int) Math.round(ball.y));
 
         for (var planet : planets) {
