@@ -5,7 +5,7 @@ import java.awt.Graphics;
 
 public class GolfBall {
     public static final double RADIUS = 5.0;
-    public static final double GRAVITY = 0.0045;
+    public static final double GRAVITY = 0.0095;
     public double x = -50.0;
     public double y = -50.0;
     public double vx = 0.0;

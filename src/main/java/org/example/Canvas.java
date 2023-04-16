@@ -8,6 +8,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 import java.awt.Font;
@@ -22,8 +24,10 @@ public final class Canvas extends JPanel implements ActionListener, MouseListene
     public boolean mouseDown = false;
     public boolean lastMouseDown = false;
     public int hits = 0;
+    public int totalHits = 0;
     public int levelsCompleted = 0;
-    public Font text = new Font(Font.SANS_SERIF, Font.PLAIN, 12);
+    public List<Integer> hitsList = new ArrayList<>();
+    public Font text = new Font(Font.SANS_SERIF, Font.PLAIN, 36);
     private static final Image IMAGE = RenderUtils.getImage("bg.png");
     public Canvas() {
         super();
@@ -37,7 +41,6 @@ public final class Canvas extends JPanel implements ActionListener, MouseListene
 
     private void generateLevel() {
     	ball.resetBall();
-        var i = 0;
 //        System.out.println("Level " + (levelsCompleted+1));
         hits = 0;
         planets = LevelBuilder.createLevel(4);
@@ -49,6 +52,7 @@ public final class Canvas extends JPanel implements ActionListener, MouseListene
     private void updateCanvas() {
     	if(ball.hitGoal) {
 //    		System.out.println("You Did It!");
+            hitsList.add(hits);
     		levelsCompleted++;
     		generateLevel();
     		return;
@@ -72,6 +76,7 @@ public final class Canvas extends JPanel implements ActionListener, MouseListene
                         ball.vy = (point.y - (getHeight() / 2)) * 0.1;
                         ball.numCollideFrames = 0;
                         hits++;
+                        totalHits++;
                     }
                 }
             } else {
@@ -104,13 +109,18 @@ public final class Canvas extends JPanel implements ActionListener, MouseListene
         renderParallax(g, 0.25, 10, 50);
         renderParallax(g, 0.175, 70, 70);
         renderParallax(g, 0.125, 80, 200);
-        g.setColor(Color.RED);
-        g.drawString("Level " + (levelsCompleted+1), 10, 12);
+        g.setColor(Color.WHITE);
+        g.drawString("Level " + (levelsCompleted+1), 10, 3 * 12);
         if (mouseDown && ball.numCollideFrames >= GolfBall.COLLIDE_THRESHOLD && point != null) {
-            g.setColor(Color.WHITE);
             g.drawLine(getWidth() / 2, getHeight() / 2, point.x, point.y);
         }
-        g.drawString("Hits "+(hits), 10, 25);
+        g.drawString("Hits "+(hits), 10, 3 * 25);
+        g.drawString("Total hits "+(totalHits), 10, 3 * 38);
+        var y = 3 * 51;
+        for (var i = Math.max(hitsList.size() - 5, 0); i < hitsList.size(); i++) {
+            g.drawString("Used " + hitsList.get(i) + " hits on level " + (i + 1), 10, y);
+            y += 3 * 13;
+        }
         g.translate((getWidth() / 2) - (int) Math.round(ball.x), (getHeight() / 2) - (int) Math.round(ball.y));
 
         for (var planet : planets) {
